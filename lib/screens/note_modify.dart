@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rest_api/models/note.dart';
+import 'package:rest_api/models/note_insert.dart';
 import 'package:rest_api/services/notes_services.dart';
 
 class NoteModify extends StatefulWidget {
@@ -21,21 +22,24 @@ class _NoteModifyState extends State<NoteModify> {
   bool isLoading = false;
   @override
   void initState() {
-    setState(() {
-      isLoading = true;
-    });
-    // TODO: implement initState
-    service.getNotes(widget.noteId).then((response) {
+    if (isEditing) {
       setState(() {
-        isLoading = false;
+        isLoading = true;
       });
-      if (response.error) {
-        errorMsg = response.errorMsg ?? 'An error occurred';
-      }
-      note = response.data;
-      _titleController.text = note.noteTitle;
-      _contentController.text = note.noteContent;
-    });
+      // TODO: implement initState
+      service.getNotes(widget.noteId).then((response) {
+        setState(() {
+          isLoading = false;
+        });
+        if (response.error) {
+          errorMsg = response.errorMsg ?? 'An error occurred';
+        }
+        note = response.data;
+        _titleController.text = note.noteTitle;
+        _contentController.text = note.noteContent;
+      });
+    }
+
     super.initState();
   }
 
@@ -48,7 +52,7 @@ class _NoteModifyState extends State<NoteModify> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: isLoading
-            ? CircularProgressIndicator()
+            ? Center(child: CircularProgressIndicator())
             : Column(
                 children: [
                   TextField(
@@ -73,8 +77,41 @@ class _NoteModifyState extends State<NoteModify> {
                         'Submit',
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
+                      onPressed: () async {
+                        if (isEditing) {
+                          // update
+                        } else {
+                          // create note
+                          final note = NoteInsert(
+                              noteContent: _contentController.text,
+                              noteTitle: _titleController.text);
+                          final result = await service.createNotes(note);
+                          final title = 'Done';
+                          final text = result.error
+                              ? (result.errorMsg ?? 'An error occurred')
+                              : 'Your note was created';
+
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                    title: Text(title),
+                                    content: Text(text),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  )).then((data) {
+                            if (result.data) {
+                              Navigator.of(context).pop();
+                            }
+                          });
+                        }
+
+                        // Navigator.of(context).pop();
                       },
                     ),
                   )

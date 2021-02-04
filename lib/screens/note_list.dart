@@ -78,10 +78,14 @@ class _NoteListState extends State<NoteList> {
               },
               child: ListTile(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => NoteModify(
-                            noteId: _apiResponse.data[index].noteId,
-                          )));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (_) => NoteModify(
+                                noteId: _apiResponse.data[index].noteId,
+                              )))
+                      .then((_) {
+                    _fetchNotes();
+                  });
                 },
                 title: Text(
                   _apiResponse.data[index].noteTitle,
