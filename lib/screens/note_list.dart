@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rest_api/models/http_response.dart';
+import 'package:rest_api/models/note_for_listing.dart';
 import 'package:rest_api/screens/note_modify.dart';
 import 'package:rest_api/services/notes_services.dart';
 import 'package:rest_api/widgets/note_delete.dart';
-import '../models/note_for_listing';
 
 class NoteList extends StatefulWidget {
   @override
