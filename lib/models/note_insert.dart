@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
-class NoteInsert {
+class NoteManuplation {
   String noteTitle;
   String noteContent;
-  NoteInsert({@required this.noteTitle, @required this.noteContent});
+  NoteManuplation({@required this.noteTitle, @required this.noteContent});
 
   Map<String, Object> toJson() {
     return {

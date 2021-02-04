@@ -79,10 +79,37 @@ class _NoteModifyState extends State<NoteModify> {
                       ),
                       onPressed: () async {
                         if (isEditing) {
-                          // update
+                          final note = NoteManuplation(
+                              noteContent: _contentController.text,
+                              noteTitle: _titleController.text);
+                          final result =
+                              await service.updateNotes(widget.noteId, note);
+                          final title = 'Done';
+                          final text = result.error
+                              ? (result.errorMsg ?? 'An error occurred')
+                              : 'Your note was updated';
+
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                    title: Text(title),
+                                    content: Text(text),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Ok'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  )).then((data) {
+                            if (result.data) {
+                              Navigator.of(context).pop();
+                            }
+                          });
                         } else {
                           // create note
-                          final note = NoteInsert(
+                          final note = NoteManuplation(
                               noteContent: _contentController.text,
                               noteTitle: _titleController.text);
                           final result = await service.createNotes(note);

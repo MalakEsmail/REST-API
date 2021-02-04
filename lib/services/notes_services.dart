@@ -41,12 +41,25 @@ class NoteServices {
         (_) => APIResponse<Note>(error: true, errorMsg: 'An Error Occured'));
   }
 
-  Future<APIResponse<bool>> createNotes(NoteInsert item) {
+  Future<APIResponse<bool>> createNotes(NoteManuplation item) {
     return http
         .post(API + '/notes',
             headers: headers, body: json.encode(item.toJson()))
         .then((data) {
       if (data.statusCode == 201) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(error: true, errorMsg: 'An Error Occured');
+    }).catchError((_) =>
+            APIResponse<bool>(error: true, errorMsg: 'An Error Occured'));
+  }
+
+  Future<APIResponse<bool>> updateNotes(String noteId, NoteManuplation item) {
+    return http
+        .put(API + '/notes/' + noteId,
+            headers: headers, body: json.encode(item.toJson()))
+        .then((data) {
+      if (data.statusCode == 204) {
         return APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(error: true, errorMsg: 'An Error Occured');
